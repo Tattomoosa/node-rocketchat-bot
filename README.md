@@ -1,4 +1,4 @@
-# Rocketman
+# Node Rocket Bot
 
 NodeJS RocketChat Bot Framework
 

@@ -2,7 +2,8 @@
   "name": "node-rocket-bot",
   "version": "0.1.0",
   "description": "Batteries included bot API for RocketChat",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "files": [ "/lib" ],
   "standard": {
     "ignore": "lib",
     "parser": "babel-eslint"
