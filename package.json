@@ -1,7 +1,7 @@
 {
   "name": "node-rocket-bot",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Batteries included bot API for RocketChat",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,14 +13,15 @@
     "minimal": "node -r source-map-support/register examples/minimal.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Matt O'Tousa",
+  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.4",
     "@babel/node": "^7.8.4",
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
+    "babel-plugin-add-module-exports": "^1.0.2",
     "babel-plugin-js-logger": "^1.0.17",
     "nodemon": "^2.0.2",
     "source-map-support": "^0.5.16"

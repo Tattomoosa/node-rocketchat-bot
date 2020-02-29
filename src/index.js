@@ -48,47 +48,48 @@ export default async ({
     pretty = false
   }
   driver.useLog(loggers.rocket)
+
   // Connect
   loggers.bot.debug('[ connect ] connecting...')
   await driver.connect({ host, useSsl })
+
   // Log in
   loggers.bot.debug('[ login ] logging in...')
   const id = await driver.login({ username, password })
+
   // Subscribe
   loggers.bot.debug('[ subcribe ] subscribing...')
   await driver.joinRooms(_rooms)
   await driver.subscribeToMessages()
+
+  // Make bot
   const bootDate = Date.now()
-  const bot = { id, username, bootDate }
   let lastUpdate = bootDate
+  const bot = { id, username, bootDate }
+
   // Wake (first callback)
   loggers.bot.debug('[ wake() ] waking bot...')
-  await onConnection({
-    log: loggers.user,
-    loggers: loggers,
-    bot: { ...bot }
-  })
+  await onConnection({ log: loggers.user, loggers: loggers, bot: { ...bot } })
+
   // Start message loop
   loggers.bot.debug('[ process() ready ] reacting to messages...')
   driver.reactToMessages( async (err, message, messageOptions) => {
-    const pm = processMessage({
-      err,
-      message,
-      messageOptions,
-      lastUpdate,
-      ignoreFlags,
-      bot,
-      loggers,
-      driver,
-    })
+
+    const pm = processMessage({ err, message, messageOptions, lastUpdate,
+      ignoreFlags, bot, loggers, driver, })
+
     if (pm && filterFn(pm)) {
       if (pretty)
         console.log(await prettyPrint.processStart(pm))
+
       await onMessage(pm)
+
       if (pretty)
         console.log(prettyPrint.processEndNotifier())
+
     } else if (loggers.bot.level === 'debug')
       loggers.bot.debug(prettyPrint.simpleIgnored(pm))
+
     lastUpdate = Date.now()
   })
 }

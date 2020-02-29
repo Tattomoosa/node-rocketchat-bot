@@ -1,5 +1,5 @@
 require('dotenv').config()
-const bot = require('../lib').default
+const bot = require('../lib')
 // const { exec } = require('child_process')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
@@ -108,10 +108,10 @@ bot({
           'Model-View-Control The World',
           "Because *it's not Java* -- not even a little bit!",
           "It's easy to be asynchronous when you're single-threaded",
-          'The JavaScript left-pad function is so powerful it can take out chunks of the internet',
+          'The JavaScript left-pad function is so powerful it can take out whole chunks of the internet',
         ])
         break;
-      case 'math': case 'm': case 'facts':
+      case 'fact': case 'f': case 'facts':
         response = 'According to javascript, '
         response += '`' + pickRandom([
           `Math.min() = ${Math.min()}`,
@@ -133,7 +133,7 @@ bot({
       e.log.info(' -> ')
       // you can respond as many times as you want to a message
       // and there is no need to await them.
-      await e.respond(response)
+      e.respond(response)
       return
     }
     e.log.info(c.grey(' X UNHANDLED'))
