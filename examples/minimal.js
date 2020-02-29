@@ -1,5 +1,5 @@
 require('dotenv').config()
-const bot = require('../lib').default
+const bot = require('../lib')
 
 /* create a file called .env in your project directory and dotenv will pull
  * the values. The file should look like this:

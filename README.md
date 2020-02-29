@@ -2,23 +2,26 @@
 
 NodeJS RocketChat Bot Framework
 
-## Getting started
-
-1. `$ git clone https://github.com/Tattomoosa/node-rocketchat-bot`
-2. Create file `.env` like this:
-  ```
-  HOST=<host address>
-  USERNAME=<bot username>
-  PASSWORD=<password>
-  ```
-3. `$ npm install && npm start`
-
 ## About
 
 This library is intended to be "batteries-included" in that it handles all
 server communication and only exposes a handful of callbacks the user needs to
-manipulate directory. That said, check the raw field on the event callback
+manipulate directly. That said, check the raw field on the event callback
 for raw RocketChat API driver access.
+
+## Usage
+
+Install and save with npm:
+
+```
+$ npm i node-rocketchat-bot --save
+```
+
+*or* yarn:
+
+```
+$ yarn add node-rocketchat-bot -S
+```
 
 ## Simple Example
 
@@ -26,7 +29,7 @@ Responds to `@` mentions.
 
 ``` javascript
 require('dotenv').config()
-const bot = require('../lib').default
+const bot = require('node-rocketchat-bot')
 
 bot({
   // from .env file
@@ -47,3 +50,17 @@ bot({
 })
 
 ```
+
+## Development
+
+1. `$ git clone https://github.com/Tattomoosa/node-rocketchat-bot`
+2. Create file `.env` like this for a test bot.
+  ```
+  HOST=<host address>
+  USERNAME=<bot username>
+  PASSWORD=<password>
+  ```
+3. `$ npm install && npm start`
+
+There is a pre-commit hook for [StandardJS](https://standardjs.com/) style.
+Most of the time running `npm lint-fix` will fix any style inconsistencies.
