@@ -14,6 +14,7 @@
     "babel-dev": "babel src --out-dir lib --source-maps inline",
     "dev": "nodemon --watch . --ignore lib --exec 'npm run babel-dev && npm run $1'",
     "start": "npm run dev nodebot",
+    "build": "npm run babel --out-dir lib",
     "nodebot": "node -r source-map-support/register examples/nodebot.js",
     "minimal": "node -r source-map-support/register examples/minimal.js"
   },
