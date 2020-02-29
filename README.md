@@ -1,3 +1,5 @@
+![](https://travis-ci.com/Tattomoosa/node-rocketchat-bot.svg?branch=master)
+
 # Node Rocket Bot
 
 NodeJS RocketChat Bot Framework
