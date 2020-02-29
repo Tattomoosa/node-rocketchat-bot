@@ -108,6 +108,7 @@ bot({
           'Model-View-Control The World',
           "Because *it's not Java* -- not even a little bit!",
           "It's easy to be asynchronous when you're single-threaded",
+          'The JavaScript left-pad function is so powerful it can take out chunks of the internet',
         ])
         break;
       case 'math': case 'm': case 'facts':
