@@ -34,7 +34,8 @@ const processNotifier = () => EVENT_COLOR('<event>')
 const processEndNotifier = () => EVENT_COLOR('</event>')
 const name = n => `${ NAME_COLOR(pad(n)) }`
 const content = content => `${ MSG_COLOR(pad(content)) }`
-const eventStart = async pm => [
+
+const processStart = async pm => [
     processNotifier(),
     '\n',
     ignoreFlags(pm.trueFlags),
@@ -43,6 +44,7 @@ const eventStart = async pm => [
     '\n',
     content(pm.message.content)
   ].join('')
+
 const simpleIgnored = async pm => '[ignored message]' +
     ` (${ formatRoomText(await pm.room.getName(pm.room.id), pm.room.type) }) ` +
     [ pm.message.author.name, pm.message.content ].join(': ') + ' -- ' +
@@ -56,10 +58,8 @@ export default {
   ignoreFlags,
   processNotifier,
   processEndNotifier,
-  format: {
-    roomText: formatRoomText,
-  },
-  eventStart,
+  format: { roomText: formatRoomText, },
+  processStart,
   simpleIgnored,
   // eventStart: async (trueFlags, message, pm) => [
 }

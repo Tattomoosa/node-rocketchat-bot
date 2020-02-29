@@ -4,7 +4,6 @@ import createLoggers from './logger'
 import prettyPrint from './prettyPrint'
 import roomTypes from './roomTypes'
 // import createIgnoreFlags from './ignoreFlags'
-import createFlags from './flags'
 
 
 const isTTY = Boolean(process.stdout.isTTY)
@@ -42,35 +41,38 @@ export default async ({
   const levels = Object.assign({}, defaultLogLevels, logLevels)
   if (!loggers)
     loggers = createLoggers({colors, levels, username})
+  // Initialize
   loggers.bot.debug('[ init ] initializing...')
   if (!colors && pretty) {
     loggers.bot.warn('[ invalid options ] pretty setting requires colors. disabling...')
     pretty = false
   }
   driver.useLog(loggers.rocket)
+  // Connect
   loggers.bot.debug('[ connect ] connecting...')
   await driver.connect({ host, useSsl })
+  // Log in
   loggers.bot.debug('[ login ] logging in...')
   const id = await driver.login({ username, password })
+  // Subscribe
   loggers.bot.debug('[ subcribe ] subscribing...')
   await driver.joinRooms(_rooms)
   await driver.subscribeToMessages()
   const bootDate = Date.now()
   const bot = { id, username, bootDate }
   let lastUpdate = bootDate
+  // Wake (first callback)
   loggers.bot.debug('[ wake() ] waking bot...')
   await onConnection({
     log: loggers.user,
     loggers: loggers,
     bot: { ...bot }
   })
+  // Start message loop
   loggers.bot.debug('[ process() ready ] reacting to messages...')
   driver.reactToMessages( async (err, message, messageOptions) => {
-    const flags = createFlags(
-      bot, message, messageOptions, lastUpdate)
     const pm = processMessage({
       err,
-      flags,
       message,
       messageOptions,
       lastUpdate,
@@ -81,7 +83,7 @@ export default async ({
     })
     if (pm && filterFn(pm)) {
       if (pretty)
-        console.log(await prettyPrint.eventStart(pm))
+        console.log(await prettyPrint.processStart(pm))
       await onMessage(pm)
       if (pretty)
         console.log(prettyPrint.processEndNotifier())

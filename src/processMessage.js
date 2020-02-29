@@ -1,4 +1,5 @@
 import roomTypes from './roomTypes'
+import createFlags from './flags'
 import menu from './menu'
 
 
@@ -7,20 +8,14 @@ export default ({
   message,
   messageOptions,
   lastUpdate,
-  flags,
   ignoreFlags,
   bot,
   loggers,
   driver,
 }) => {
-  const {
-    getRoomName,
-    sendToRoomId,
-    sendDirectToUser,
-    disconnect,
-    unsubscribeAll,
-    setReaction,
-  } = driver
+  const { getRoomName, sendToRoomId, sendDirectToUser,
+    disconnect, unsubscribeAll, setReaction, } = driver
+  const flags = createFlags( bot, message, messageOptions, lastUpdate)
   const rawEvent = { err, message, messageOptions }
   if (ignoreFlags.filter(f => flags[f]).length > 0)
     return
