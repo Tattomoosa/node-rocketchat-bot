@@ -9,7 +9,7 @@
     "parser": "babel-eslint"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run lint",
     "babel": "babel src --out-dir lib",
     "lint": "standard",
     "lintfix": "standard --fix",
