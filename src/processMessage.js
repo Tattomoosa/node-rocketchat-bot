@@ -1,4 +1,5 @@
 import roomTypes from './roomTypes'
+import menu from './menu'
 
 
 export default ({
@@ -32,6 +33,7 @@ export default ({
   }
   return {
     flags: { ...flags },
+    trueFlags: Object.keys(flags).filter(f => flags[f]),
     // bot state
     bot: { ...bot },
     message: {
@@ -59,5 +61,8 @@ export default ({
     setReaction,
     // Raw rocketchat driver/response
     raw: { driver, event: { ...rawEvent } },
+    ops: {
+      menu,
+    }
   }
 }

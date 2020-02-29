@@ -1,10 +1,11 @@
 import { driver } from '@rocket.chat/sdk'
-import wrapEvent from './wrapEvent'
+import processMessage from './processMessage'
 import createLoggers from './logger'
 import prettyPrint from './prettyPrint'
 import roomTypes from './roomTypes'
 // import createIgnoreFlags from './ignoreFlags'
 import createFlags from './flags'
+
 
 const isTTY = Boolean(process.stdout.isTTY)
 
@@ -21,10 +22,12 @@ export default async ({
   ssl: useSsl = true,
   rooms: _rooms,
   // run on wake
-  wake,
+  onConnection,
   // run on message
-  process,
+  onMessage,
+  // use colors?
   colors = isTTY,
+  // pretty output?
   pretty = isTTY,
   loggers = null,
   // logLevel = { rocket: 'warn', bot: 'info', user: 'debug' },
@@ -56,7 +59,7 @@ export default async ({
   const bot = { id, username, bootDate }
   let lastUpdate = bootDate
   loggers.bot.debug('[ wake() ] waking bot...')
-  await wake({
+  await onConnection({
     log: loggers.user,
     loggers: loggers,
     bot: { ...bot }
@@ -65,7 +68,7 @@ export default async ({
   driver.reactToMessages( async (err, message, messageOptions) => {
     const flags = createFlags(
       bot, message, messageOptions, lastUpdate)
-    const event = wrapEvent({
+    const pm = processMessage({
       err,
       flags,
       message,
@@ -76,33 +79,14 @@ export default async ({
       loggers,
       driver,
     })
-    const trueFlags = Object.keys(flags)
-      .filter(f => flags[f])
-    if (event && filterFn(event)) {
-      if (pretty) {
-        const roomName = await event.room.getName(event.room.id)
-        console.log([
-            prettyPrint.eventNotifier(),
-            '\n',
-            prettyPrint.ignoreFlags(trueFlags),
-            prettyPrint.room(roomName, event.room.type),
-            prettyPrint.name(message.u.name),
-            '\n',
-            prettyPrint.content(message.msg)
-          ].join('')
-        )
-      }
-      await process(event)
+    if (pm && filterFn(pm)) {
       if (pretty)
-        console.log(prettyPrint.eventEndNotifier())
-    } else if (loggers.bot.level === 'debug') {
-      const roomName = await driver.getRoomName(message.rid)
-      loggers.bot.debug('[ignored event]' +
-        ` (${ prettyPrint.format.roomText(
-          roomName, roomTypes[messageOptions.roomType]) }) ` + 
-      [ message.u.name, message.msg ].join(': ') + ' -- ' +
-      trueFlags.join(' '))
-    }
+        console.log(await prettyPrint.eventStart(pm))
+      await onMessage(pm)
+      if (pretty)
+        console.log(prettyPrint.processEndNotifier())
+    } else if (loggers.bot.level === 'debug')
+      loggers.bot.debug(prettyPrint.simpleIgnored(pm))
     lastUpdate = Date.now()
   })
 }

@@ -21,9 +21,9 @@ bot({
   // join room(s)
   rooms: ['bots'],
   // when ready (can also console.log)
-  wake: async e => e.log.info(`${e.bot.username} ready`),
+  onConnection: async e => e.log.info(`${e.bot.username} ready`),
   // on message
-  process: async e => {
+  onMessage: async e => {
     if (e.flags.isMentioned)
       e.respond(`hi ${e.message.author.name} thanks for mentioning me`)
   }

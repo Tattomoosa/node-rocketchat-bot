@@ -4,7 +4,6 @@ const fromBot = message => message.hasOwnProperty('bot')
 
 export default (bot, message, messageOptions, lastUpdate) => ({
   fromSelf: bot.id === message.u._id,
-  // TODO test this
   isMentioned: message.mentions.map(m => m._id).some(id => id === bot.id),
   // TODO test this
   spokenOf: message.msg.toLowerCase().includes(bot.username.toLowerCase()),
