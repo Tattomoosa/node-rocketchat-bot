@@ -1,5 +1,5 @@
 {
-  "name": "node-rocket-bot",
+  "name": "node-rocketchat-bot",
   "version": "0.1.0",
   "description": "Batteries included bot API for RocketChat",
   "main": "/lib/index.js",
