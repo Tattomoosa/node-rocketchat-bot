@@ -18,6 +18,14 @@ const helpMenu = {
   ]
 }
 
+const features = {
+  heading: 'node-rocket-bot features',
+  features: [
+    ['tags', 'filter out common messages easily with tags'],
+    ['help menu', 'help menu helper'],
+  ]
+}
+
 bot({
   /* create a file called .env in your project directory and dotenv will pull
    * the values. The file should look like this:
@@ -31,6 +39,9 @@ bot({
   host: process.env.HOST,
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
+  // 
+  author: process.env.AUTHOR,
+  messageOnException: process.env.AUTHOR,
   // whether to use pretty log output - default is
   // process.stdout.isTTY which should be good enough
   // (pretty output to stdout, basic to files or other
@@ -44,7 +55,11 @@ bot({
   // messages with these flags won't make it to your bot
   ignoreFlags: ['fromSelf', 'read', 'notInRoom'],
   // less logging
-  logLevel: 'debug',
+  logLevels: {
+    rocket: 'warn',
+    user: 'debug',
+    bot: 'info',
+  },
   pretty: false,
   // only events that return true come through to process at all.
   // filtering out events in a filterFn is more efficient than waiting
@@ -112,6 +127,8 @@ bot({
           'The JavaScript left-pad function is so powerful it can take out whole chunks of the internet'
         ])
         break
+      case 'features': case 'lib': case 'library':
+        response = e.ops.menu(features.heading, features.features)
       case 'fact': case 'f': case 'facts':
         response = 'According to javascript, '
         response += '`' + pickRandom([

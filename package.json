@@ -10,7 +10,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "babel": "babel src --out-dir lib",
-    "lint": "standard --fix",
+    "lint": "standard",
+    "lintfix": "standard --fix",
     "babel-dev": "babel src --out-dir lib --source-maps inline",
     "dev": "nodemon --watch . --ignore lib --exec 'npm run babel-dev && npm run $1'",
     "start": "npm run dev nodebot",

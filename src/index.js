@@ -13,10 +13,15 @@ const defaultLogLevels = {
   user: 'debug'
 }
 
+const defaultFilterFn = () => true
+
 export default async ({
   host = '',
   username = '',
   password,
+  author = '',
+  // message author on exception
+  messageOnException = false,
   ssl: useSsl = true,
   rooms: _rooms,
   // run on wake
@@ -28,14 +33,14 @@ export default async ({
   // pretty output?
   pretty = isTTY,
   loggers = null,
-  // logLevel = { rocket: 'warn', bot: 'info', user: 'debug' },
-  logLevels = {},
+  // logLevels = { rocket: 'warn', bot: 'info', user: 'debug' },
+  logLevels,
   // pass a function here to ignore messages you can't ignore with flags
-  filterFn = () => true,
+  filterFn = defaultFilterFn,
   // flags:
   // pass empty array to disable defaults, not recommended
   // except maybe 'read' if you want to track message edits for some reason
-  ignoreFlags = ['fromSelf', 'read', 'notInRoom']
+  ignoreFlags = ['fromSelf', 'read', 'notInRoom'],
 }) => {
   const levels = Object.assign({}, defaultLogLevels, logLevels)
   if (!loggers) { loggers = createLoggers({ colors, levels, username }) }
@@ -86,7 +91,13 @@ export default async ({
     if (pm && filterFn(pm)) {
       if (pretty) { console.log(await prettyPrint.processStart(pm)) }
 
-      await onMessage(pm)
+      try {
+        await onMessage(pm)
+      } catch (x) {
+        loggers.bot.error(x + '\n' + new Error().stack)
+        if (messageOnException)
+          driver.sendDirectToUser('```\n[ exception thrown ] ' + x + '\n\n' + new Error().stack + '\n```', author)
+      }
 
       if (pretty) { console.log(prettyPrint.processEndNotifier()) }
     } else if (loggers.bot.level === 'debug') { loggers.bot.debug(prettyPrint.simpleIgnored(pm)) }
