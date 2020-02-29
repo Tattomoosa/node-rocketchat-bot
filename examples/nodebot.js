@@ -22,7 +22,7 @@ const features = {
   heading: 'node-rocket-bot features',
   features: [
     ['tags', 'filter out common messages easily with tags'],
-    ['help menu', 'help menu helper'],
+    ['help menu', 'help menu helper']
   ]
 }
 
@@ -39,7 +39,7 @@ bot({
   host: process.env.HOST,
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
-  // 
+  //
   author: process.env.AUTHOR,
   messageOnException: process.env.AUTHOR,
   // whether to use pretty log output - default is
@@ -58,7 +58,7 @@ bot({
   logLevels: {
     rocket: 'warn',
     user: 'debug',
-    bot: 'info',
+    bot: 'info'
   },
   pretty: false,
   // only events that return true come through to process at all.
@@ -129,6 +129,7 @@ bot({
         break
       case 'features': case 'lib': case 'library':
         response = e.ops.menu(features.heading, features.features)
+        break
       case 'fact': case 'f': case 'facts':
         response = 'According to javascript, '
         response += '`' + pickRandom([

@@ -40,7 +40,7 @@ export default async ({
   // flags:
   // pass empty array to disable defaults, not recommended
   // except maybe 'read' if you want to track message edits for some reason
-  ignoreFlags = ['fromSelf', 'read', 'notInRoom'],
+  ignoreFlags = ['fromSelf', 'read', 'notInRoom']
 }) => {
   const levels = Object.assign({}, defaultLogLevels, logLevels)
   if (!loggers) { loggers = createLoggers({ colors, levels, username }) }
@@ -95,8 +95,7 @@ export default async ({
         await onMessage(pm)
       } catch (x) {
         loggers.bot.error(x + '\n' + new Error().stack)
-        if (messageOnException)
-          driver.sendDirectToUser('```\n[ exception thrown ] ' + x + '\n\n' + new Error().stack + '\n```', author)
+        if (messageOnException) { driver.sendDirectToUser('```\n[ exception thrown ] ' + x + '\n\n' + new Error().stack + '\n```', author) }
       }
 
       if (pretty) { console.log(prettyPrint.processEndNotifier()) }
