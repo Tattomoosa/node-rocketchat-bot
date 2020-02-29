@@ -1,6 +1,7 @@
 // functions that don't depend on the driver
-const wasBefore = (bootDate, { ts }) => bootDate > ts['$date']
-const fromBot = message => message.hasOwnProperty('bot')
+const wasBefore = (bootDate, { ts }) => bootDate > ts.$date
+// const fromBot = message => Object.hasOwnProperty(message, 'bot')
+const fromBot = message => 'bot' in message
 
 export default (bot, message, messageOptions, lastUpdate) => ({
   fromSelf: bot.id === message.u._id,
@@ -12,5 +13,5 @@ export default (bot, message, messageOptions, lastUpdate) => ({
   isErr: message.err != null,
   wasBeforeBoot: wasBefore(bot.bootDate, message),
   wasBeforeLastUpdate: wasBefore(lastUpdate, message),
-  read: !message.unread,
+  read: !message.unread
 })

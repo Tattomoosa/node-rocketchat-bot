@@ -2,7 +2,6 @@ import roomTypes from './roomTypes'
 import createFlags from './flags'
 import menu from './menu'
 
-
 export default ({
   err,
   message,
@@ -11,20 +10,21 @@ export default ({
   ignoreFlags,
   bot,
   loggers,
-  driver,
+  driver
 }) => {
-  const { getRoomName, sendToRoomId, sendDirectToUser,
-    disconnect, unsubscribeAll, setReaction, } = driver
-  const flags = createFlags( bot, message, messageOptions, lastUpdate)
+  const {
+    getRoomName, sendToRoomId, sendDirectToUser,
+    disconnect, unsubscribeAll, setReaction
+  } = driver
+  const flags = createFlags(bot, message, messageOptions, lastUpdate)
   const rawEvent = { err, message, messageOptions }
-  if (ignoreFlags.filter(f => flags[f]).length > 0)
-    return
-  const roomName = async () => await getRoomName(message.rid)
-  const respond = async content => await sendToRoomId(content, message.rid)
-  const respondDirect = async content => await sendDirectToUser(content, message.u.username)
+  if (ignoreFlags.filter(f => flags[f]).length > 0) { return }
+  const roomName = async () => getRoomName(message.rid)
+  const respond = async content => sendToRoomId(content, message.rid)
+  const respondDirect = async content => sendDirectToUser(content, message.u.username)
   const wrapLog = (name, fn) => async (...args) => {
     loggers.bot.info([`[ ${name} ]`, ...args].join(' | '))
-    return await fn(...args)
+    return fn(...args)
   }
   return {
     flags: { ...flags },
@@ -37,12 +37,12 @@ export default ({
       content: message.msg,
       mentions: message.mentions,
       author: { ...message.u },
-      timestamp: message.ts['$date'],
+      timestamp: message.ts.$date
     },
     room: {
       id: message.rid,
       getName: roomName,
-      type: roomTypes[messageOptions.roomType],
+      type: roomTypes[messageOptions.roomType]
     },
     lastUpdate,
     respond: wrapLog('respond', respond),
@@ -57,7 +57,7 @@ export default ({
     // Raw rocketchat driver/response
     raw: { driver, event: { ...rawEvent } },
     ops: {
-      menu,
+      menu
     }
   }
 }

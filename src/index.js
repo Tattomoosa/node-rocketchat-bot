@@ -2,9 +2,8 @@ import { driver } from '@rocket.chat/sdk'
 import processMessage from './processMessage'
 import createLoggers from './logger'
 import prettyPrint from './prettyPrint'
-import roomTypes from './roomTypes'
+// import roomTypes from './roomTypes'
 // import createIgnoreFlags from './ignoreFlags'
-
 
 const isTTY = Boolean(process.stdout.isTTY)
 
@@ -36,11 +35,10 @@ export default async ({
   // flags:
   // pass empty array to disable defaults, not recommended
   // except maybe 'read' if you want to track message edits for some reason
-  ignoreFlags = ['fromSelf', 'read', 'notInRoom'],
+  ignoreFlags = ['fromSelf', 'read', 'notInRoom']
 }) => {
   const levels = Object.assign({}, defaultLogLevels, logLevels)
-  if (!loggers)
-    loggers = createLoggers({colors, levels, username})
+  if (!loggers) { loggers = createLoggers({ colors, levels, username }) }
   // Initialize
   loggers.bot.debug('[ init ] initializing...')
   if (!colors && pretty) {
@@ -73,22 +71,25 @@ export default async ({
 
   // Start message loop
   loggers.bot.debug('[ process() ready ] reacting to messages...')
-  driver.reactToMessages( async (err, message, messageOptions) => {
-
-    const pm = processMessage({ err, message, messageOptions, lastUpdate,
-      ignoreFlags, bot, loggers, driver, })
+  driver.reactToMessages(async (err, message, messageOptions) => {
+    const pm = processMessage({
+      err,
+      message,
+      messageOptions,
+      lastUpdate,
+      ignoreFlags,
+      bot,
+      loggers,
+      driver
+    })
 
     if (pm && filterFn(pm)) {
-      if (pretty)
-        console.log(await prettyPrint.processStart(pm))
+      if (pretty) { console.log(await prettyPrint.processStart(pm)) }
 
       await onMessage(pm)
 
-      if (pretty)
-        console.log(prettyPrint.processEndNotifier())
-
-    } else if (loggers.bot.level === 'debug')
-      loggers.bot.debug(prettyPrint.simpleIgnored(pm))
+      if (pretty) { console.log(prettyPrint.processEndNotifier()) }
+    } else if (loggers.bot.level === 'debug') { loggers.bot.debug(prettyPrint.simpleIgnored(pm)) }
 
     lastUpdate = Date.now()
   })

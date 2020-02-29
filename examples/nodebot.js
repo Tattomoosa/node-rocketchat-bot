@@ -9,12 +9,12 @@ const c = require('chalk')
 const helpMenu = {
   usage: '(nodebot|@nodebot) [option]',
   options: [
-    ['help'        , 'print this message'],
-    ['why'         , 'why javascript?'],
-    ['fact'        , 'true javascript facts'],
-    ['get'         , 'get the repo'],
+    ['help', 'print this message'],
+    ['why', 'why javascript?'],
+    ['fact', 'true javascript facts'],
+    ['get', 'get the repo'],
     ['dependencies', 'count dependencies'],
-    ['secret'      , '?!']
+    ['secret', '?!']
   ]
 }
 
@@ -79,23 +79,24 @@ bot({
       case 'h': case '?': case 'help':
         response = e.ops.menu(helpMenu.usage, helpMenu.options)
         response += '\n ^ i have a helper making menus like this ez!'
-        break;
+        break
       case 'shh': case 'secret':
         response = 'I will not tell you my secret'
-        e.respondToUser("There are no secrets in javascript. `nodebot get` \
-                    to see all mine")
-        break;
+        e.respondToUser('There are no secrets in javascript. `nodebot get` ' +
+          'to see all of mine')
+        break
       case 'get':
-        response = `You can find me on\
-          [github](https://github.com/Tattomoosa/node-rocketchat-bot)`
-        break;
-      case 'deps': case 'dep': case 'dependencies': case 'd':
-        let { stdout, stderr } = await exec('ls -l node_modules | wc -l')
+        response = 'You can find me on ' +
+          '[github](https://github.com/Tattomoosa/node-rocketchat-bot)'
+        break
+      case 'deps': case 'dep': case 'dependencies': case 'd': {
+        const { stdout, stderr } = await exec('ls -l node_modules | wc -l')
         if (stderr) e.log.error(stderr)
-        response = `I have ${ stdout.slice(0, -1)} dependencies, and I'm \
+        response = `I have ${stdout.slice(0, -1)} dependencies, and I'm \
                     sure they all do something really important and difficult \
                     to write from scratch.`
-        break;
+        break
+      }
       case 'why': case 'node': case 'javascript':
         response = 'Why JavaScript? '
         response += pickRandom([
@@ -108,25 +109,25 @@ bot({
           'Model-View-Control The World',
           "Because *it's not Java* -- not even a little bit!",
           "It's easy to be asynchronous when you're single-threaded",
-          'The JavaScript left-pad function is so powerful it can take out whole chunks of the internet',
+          'The JavaScript left-pad function is so powerful it can take out whole chunks of the internet'
         ])
-        break;
+        break
       case 'fact': case 'f': case 'facts':
         response = 'According to javascript, '
         response += '`' + pickRandom([
           `Math.min() = ${Math.min()}`,
           `1 < 2 < 3 = ${1 < 2 < 3}`,
-          `'5' + 3 = ${'5' + 3}\` but \`'5' - 3 = ${'5'- 3} `,
-          `'b' + 'a' + + 'a' + 'a' = ${ 'b' + 'a' + + 'a' + 'a' }`,
-          `[1, 2, 3] + [4, 5, 6] = ${ [1, 2, 3] + [4, 5, 6] }`,
-          `true + true = ${ true + true }`,
-          `typeof NaN = ${ typeof NaN }`,
-          `typeof null = ${ typeof null }`,
+          `'5' + 3 = ${'5' + 3}\` but \`'5' - 3 = ${'5' - 3} `,
+          `'b' + 'a' + + 'a' + 'a' = ${'b' + 'a' + +'a' + 'a'}`,
+          `[1, 2, 3] + [4, 5, 6] = ${[1, 2, 3] + [4, 5, 6]}`,
+          `true + true = ${true + true}`,
+          `typeof NaN = ${typeof NaN}`,
+          `typeof null = ${typeof null}`
         ]) + '`'
-        break;
+        break
       case '':
         response = 'What? Maybe try `nodebot help`?'
-        break;
+        break
       default: response = 'unknown command'
     }
     if (response) {
@@ -137,7 +138,6 @@ bot({
       return
     }
     e.log.info(c.grey(' X UNHANDLED'))
-    return
   }
 })
 

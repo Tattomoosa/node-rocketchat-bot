@@ -1,8 +1,6 @@
-const roomTypes = {
+export default {
   c: 'chat',
   d: 'direct',
   p: 'private',
-  l: 'live',
+  l: 'live'
 }
-
-export default roomTypes

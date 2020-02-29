@@ -5,7 +5,7 @@ const printArgOption = (arg, message) => `
 
 export default (usageStr, optionMap) =>
   '```' + `\
-  ${ usageStr }
-  ${ optionMap.map(o => printArgOption(o)) }
+  ${usageStr}
+  ${optionMap.map(o => printArgOption(o))}
   \
   ` + '```'
