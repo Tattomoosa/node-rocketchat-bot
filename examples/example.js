@@ -1,84 +1,116 @@
 require('dotenv').config()
 const rocketman = require('../lib').default
-const winston = require('winston')
-const { exec } = require('child_process')
+// const { exec } = require('child_process')
+const util = require('util')
+const exec = util.promisify(require('child_process').exec)
 const c = require('chalk')
 
-// colors
-const errorColor = t => c.red(t)
-const ignoreColor = t => c.bgGrey(t)
-// rocketchat api logger so we can change its logging behavior
-// (any object with methods debug, info, error, warning works)
-const logFormat = winston.format.printf(
-  ({ level, message }) => {
-    let l_color
-      = level === 'info' ? c.grey
-      : level === 'warning' ? c.redBright
-      : level === 'debug' ? c.blue
-      : level === 'error' ? c.red
-      : c.white
-    return `${ c.grey('[[ ROCKET ]]') } ${ l_color(`${message}`) }`
-})
-const rocket_logger = winston.createLogger({
-  format: logFormat,
-  transports: [ new winston.transports.Console() ]
-})
 
-// shorthand
-const log = console.log
-
-// do the thing
 rocketman({
+  /* create a file called .env in your project directory and dotenv will pull
+   * the values. The file should look like this:
+   *
+   * HOST=your.host.whatever.com
+   * USERNAME=bot
+   * PASSWORD=1234
+   *
+   * DO NOT COMMIT THIS FILE INTO YOUR GIT REPOSITORY
+   */
   host: process.env.HOST,
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
-  name: 'nody boy',
+  // color terminal output
   colors: true,
+  // pretty log output
+  pretty: true,
+  // use SSL - true for https
   ssl: true,
-  rooms: ['GENERAL', 'bots'],
-  logger: rocket_logger,
-  // Recommended filter flags (Also default, pass empty array to remove)
-  filterFlags: ['fromSelf', 'read'],
+  // rooms to join on login
+  rooms: ['bots'],
+  // these are also the default filter flags
+  ignoreFlags: ['fromSelf', 'read', 'notInRoom'],
+  // only events that return true come through to process at all
+  // filtering out events in a filterFn is more efficient than waiting
+  // until they end up in process. but does it really matter? not so much.
+  filterFn: e => e.message.content.toLowerCase().startsWith(e.bot.username.toLowerCase()),
+  // after connection and login. use this for any sort of one-time start behavior
   wake: async e => {
-    rocket_logger.level = 'error'
-    log(`${c.green.bold(`${e.bot.username} is listening`)}`)
+    // turn off most raw rocketchat api logging info
+    e.loggers.rocket.level = 'warn'
+    // set to debug to see basic log of ignored events
+    // set to at least info to see log of sent messages
+    e.loggers.bot.level = 'info'
+    // this is the log to use if you want info/warn/debug/error API
+    // note that it doesn't expand objects, so you should still use
+    // console.log for that
+    e.log.level = 'debug'
+    e.log.info(`${e.bot.username} is listening`)
   },
   // process event
   process: async e => {
-    // Circumstances under which we may not want to respond
-    // Can be filtered automatically with the 'filterFlags'
-    // option (recommended)
-    const ignoreFlags = [
-      [ e.isErr, errorColor('ERROR') ],
-      [ e.read, ignoreColor(' Read ') ],
-      [ e.wasBeforeBoot, ignoreColor(' Before Boot ') ],
-      [ e.fromSelf, ignoreColor(' From Self ') ],
-      [ e.fromBot, ignoreColor(' From Bot ') ],
-      [ e.wasBeforeLastUpdate, ignoreColor(' Before Last Update ') ],
-      [ !e.roomParticipant, ignoreColor(' Not in Room ') ],
-    ]
-    log(c.magenta('\nEVENT'))
-    // Print flags
-    const trueIgnores = ignoreFlags.filter(f => f[0])
-    if (trueIgnores.length)
-      log(trueIgnores.map(f => `${ f[1] } `).join(''))
-    // Print room / message
-    log(`${c.blue(await e.prettyRoom())}\n${e.prettyString()}`)
-    // if any ignore flags are true
-    if (trueIgnores.length > 0)
-      return log(c.grey(' X IGNORE'))
     // Respond
-    if (e.message.content.toLowerCase().startsWith(e.bot.username.toLowerCase())) {
-      log(c.green(' -> RESPOND'))
-      // execute shell command and respond with output
-      exec('ls -l node_modules | wc -l', (err, stdout, stderr) =>
-        err || stderr
-          ? e.respond(`...something went wrong`)
-          : e.respond(`Hi I'm ${e.bot.username}, I have ${
-            stdout.slice(0, -1)} dependencies.`)
-      )
-      return
+    e.log.info(c.green(' :) PROCESSING (:'))
+    // get 1st 'argument'
+    // for true commandline arguments you can use the 'yargs' package
+    const operation = e.message.content.split(' ')[1].toLowerCase()
+    e.log.info(`operation = ${operation}`)
+    let response = null
+    switch (operation) {
+      case '-h':
+      case 'help':
+      case '--help':
+        response = "I can't help you. But I *can* tell you `why` javascript is great, " +
+          "real true facts about `math`, and a live count of my npm `dependencies`"
+        break;
+      case 'deps':
+      case 'dep':
+      case 'dependencies':
+      case '-d':
+        let { stdout, stderr } = await exec('ls -l node_modules | wc -l')
+        if (stderr) e.log.error(stderr)
+        response = `I have ${ stdout.slice(0, -1)} dependencies, and I'm \
+                    sure they all do something really important and difficult \
+                    to write from scratch.`
+        break;
+      case 'why':
+      case 'node':
+      case 'javascript':
+        response = 'Why JavaScript? '
+        response += pickRandom([
+          'First the browser. Then the servers. Then the desktop. Then the world.',
+          'Write once. Lint. Transpile. Polyfill. Build. Monkeypatch. \
+          Take it out of the browser. Put it in a browser that looks like an app. \
+          Add ads. Trackers. Crypto-miners. Run anywhere.',
+          'The *fastest* slow language',
+          'The front end is *the end*, ok?',
+          'Model-View-Control The World',
+          "It's easy to be asynchronous when you're single-threaded",
+          'Why not?',
+        ])
+        break;
+      case 'math':
+      case '':
+        response = 'According to javascript, '
+        response += pickRandom([
+          `\`Math.min() = ${Math.min()}\``,
+          `\`1 < 2 < 3 = ${1 < 2 < 3}\``,
+          `\`'5' + 3 = ${'5' + 3}\` but \`'5' - 3 = ${'5'- 3} \``,
+          `\`'b' + 'a' + + 'a' + 'a' = ${ 'b' + 'a' + + 'a' + 'a' }\``,
+          `\`[1, 2, 3] + [4, 5, 6] = ${ [1, 2, 3] + [4, 5, 6] }\``,
+          `\`true + true = ${ true + true }\``,
+          `\`typeof NaN = ${ typeof NaN }\` ...NaN means 'Not a number', btw.`,
+          `\`typeof null = ${ typeof null }\``,
+          `\`typeof null = ${ typeof null }\``,
+        ])
+        break;
+      default: response = 'unknown command'
     }
-    return log(c.grey(' X UNHANDLED'))
+    if (response) {
+      console.log(response)
+      return await e.respond(response)
+    }
+    return e.log.info(c.grey(' X UNHANDLED'))
   }
 })
+
+const pickRandom = arr => arr[Math.floor(Math.random() * arr.length)]

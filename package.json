@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src --out-dir lib",
-    "start": "nodemon --watch . --ignore lib --exec 'npm run build && node examples/example.js'",
-    "example": "node example.js"
+    "babel": "babel src --out-dir lib",
+    "babel-dev": "babel src --out-dir lib --source-maps inline",
+    "dev": "nodemon --watch . --ignore lib --exec 'npm run babel-dev && npm run example'",
+    "start": "npm run dev",
+    "example": "node -r source-map-support/register examples/example.js"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +21,8 @@
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "babel-plugin-js-logger": "^1.0.17",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "source-map-support": "^0.5.16"
   },
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",

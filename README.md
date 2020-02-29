@@ -4,7 +4,14 @@ NodeJS RocketChat Bot Framework
 
 ## Getting started
 
-`git clone` into a local directory and `npm init && npm start`
+1. `git clone` into a local directory
+2. Create file `.env` like this:
+  ```
+  HOST=<host address>
+  USERNAME=<bot username>
+  PASSWORD=<password>
+  ```
+`npm init && npm start`
 
 ## About
 
