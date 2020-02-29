@@ -38,6 +38,7 @@ export default ({
       id: message._id,
       unread: message.unread,
       content: message.msg,
+      mentions: message.mentions,
       author: { ...message.u },
       timestamp: message.ts['$date'],
     },

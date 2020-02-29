@@ -1,0 +1,32 @@
+
+> node-rocket-bot@1.0.0 start /u/motousa/node-rocket-bot
+> npm run dev
+
+
+> node-rocket-bot@1.0.0 dev /u/motousa/node-rocket-bot
+> nodemon --watch . --ignore lib --exec 'npm run babel-dev && npm run example'
+
+[33m[nodemon] 2.0.2[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching dir(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,json[39m
+[32m[nodemon] starting `npm run babel-dev && npm run example`[39m
+
+> node-rocket-bot@1.0.0 babel-dev /u/motousa/node-rocket-bot
+> babel src --out-dir lib --source-maps inline
+
+Successfully compiled 7 files with Babel.
+
+> node-rocket-bot@1.0.0 example /u/motousa/node-rocket-bot
+> node -r source-map-support/register examples/nodebot.js
+
+ISTTY false
+[[ nodebot ]] nodebot is listening
+event ==========================================================================
+ (direct)  o2 
+ nodebot hi 
+[[ nodebot ]]  :) PROCESSING (:
+[[ nodebot ]] operation = hi
+[[ nodebot ]]  -> "unknown command"
+[[ bot ]] [ respond ] | unknown command
+================================================================================

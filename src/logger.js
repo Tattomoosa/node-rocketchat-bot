@@ -19,22 +19,22 @@ const createFormat = (tag, useColor, color) =>
 
 export default ({
   colors = true,
-  level = 'info',
+  levels = {},
   username = 'user',
 }) => ({
   rocket: winston.createLogger({
     format: createFormat('rocket', colors, c.grey),
     transports: [ new winston.transports.Console() ],
-    level,
+    level: levels.rocket,
   }),
   bot: winston.createLogger({
     format: createFormat('bot', colors, c.cyan),
     transports: [ new winston.transports.Console() ],
-    level,
+    level: levels.bot,
   }),
   user: winston.createLogger({
     format: createFormat(username, colors, c.cyanBright),
     transports: [ new winston.transports.Console() ],
-    level,
+    level: levels.user,
   }),
 })

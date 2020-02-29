@@ -1,39 +1,43 @@
 require('dotenv').config()
-const rocketman = require('../lib').default
+const bot = require('../lib').default
 // const { exec } = require('child_process')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const c = require('chalk')
 
 
-rocketman({
+bot({
   /* create a file called .env in your project directory and dotenv will pull
    * the values. The file should look like this:
    *
    * HOST=your.host.whatever.com
    * USERNAME=bot
-   * PASSWORD=1234
+   * PASSWORD=password
    *
    * DO NOT COMMIT THIS FILE INTO YOUR GIT REPOSITORY
    */
   host: process.env.HOST,
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
-  // color terminal output
-  colors: true,
-  // pretty log output
-  pretty: true,
+  // whether to use pretty log output - default is
+  // process.stdout.isTTY which should be good enough
+  // (pretty output to stdout, basic to files or other
+  // programs)
+  // pretty: true,
   // use SSL - true for https
   ssl: true,
   // rooms to join on login
   rooms: ['bots'],
-  // these are also the default filter flags
+  // these are also the default ignore flags
   ignoreFlags: ['fromSelf', 'read', 'notInRoom'],
+  // less logging
+  logLevel: 'warn',
   // only events that return true come through to process at all
   // filtering out events in a filterFn is more efficient than waiting
   // until they end up in process. but does it really matter? not so much.
   filterFn: e => e.message.content.toLowerCase().startsWith(e.bot.username.toLowerCase()),
-  // after connection and login. use this for any sort of one-time start behavior
+  // after connection and login.
+  // use this for any sort of one-time start behavior
   wake: async e => {
     // turn off most raw rocketchat api logging info
     e.loggers.rocket.level = 'warn'
@@ -48,19 +52,26 @@ rocketman({
   },
   // process event
   process: async e => {
-    // Respond
-    e.log.info(c.green(' :) PROCESSING (:'))
+    e.log.info('processing...')
     // get 1st 'argument'
     // for true commandline arguments you can use the 'yargs' package
-    const operation = e.message.content.split(' ')[1].toLowerCase()
+    const words = e.message.content.split(' ')
+    const operation = words[1] ? words[1].toLowerCase() : ''
     e.log.info(`operation = ${operation}`)
     let response = null
     switch (operation) {
       case '-h':
+      case '?':
       case 'help':
       case '--help':
         response = "I can't help you. But I *can* tell you `why` javascript is great, " +
-          "real true facts about `math`, and a live count of my npm `dependencies`"
+          "real true facts about `math`, where to `get` the nodebot framework, " +
+          "and a live count of my npm `dependencies`"
+        break;
+      case 'secret':
+        response = "There are no secrets in javascript."
+      case 'get':
+        response = "You can find me [on github](https://github.com/Tattomoosa/node-rocketchat-bot)"
         break;
       case 'deps':
       case 'dep':
@@ -78,9 +89,9 @@ rocketman({
         response = 'Why JavaScript? '
         response += pickRandom([
           'First the browser. Then the servers. Then the desktop. Then the world.',
-          'Write once. Lint. Transpile. Polyfill. Build. Monkeypatch. \
-          Take it out of the browser. Put it in a browser that looks like an app. \
-          Add ads. Trackers. Crypto-miners. Run anywhere.',
+          'Write once. Lint. Transpile. Polyfill. Build. Monkeypatch. Minify. ' +
+          'Take it out of the browser. Put it in a browser that looks like an app. ' +
+          'Add ads. Trackers. Crypto-miners. Run anywhere.',
           'The *fastest* slow language',
           'The front end is *the end*, ok?',
           'Model-View-Control The World',
@@ -97,19 +108,18 @@ rocketman({
           `\`'b' + 'a' + + 'a' + 'a' = ${ 'b' + 'a' + + 'a' + 'a' }\``,
           `\`[1, 2, 3] + [4, 5, 6] = ${ [1, 2, 3] + [4, 5, 6] }\``,
           `\`true + true = ${ true + true }\``,
-          `\`typeof NaN = ${ typeof NaN }\` ...NaN means 'Not a number', btw.`,
-          `\`typeof null = ${ typeof null }\``,
+          `\`typeof NaN = ${ typeof NaN }\``,
           `\`typeof null = ${ typeof null }\``,
         ])
         break;
       default: response = 'unknown command'
     }
     if (response) {
-      console.log(response)
+      e.log.info(' -> "' + response + '"')
       return await e.respond(response)
     }
     return e.log.info(c.grey(' X UNHANDLED'))
   }
 })
 
-const pickRandom = arr => arr[Math.floor(Math.random() * arr.length)]
+const pickRandom = a => a[Math.floor(Math.random() * a.length)]
