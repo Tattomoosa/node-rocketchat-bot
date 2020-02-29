@@ -85,7 +85,6 @@ rocketman({
           'The front end is *the end*, ok?',
           'Model-View-Control The World',
           "It's easy to be asynchronous when you're single-threaded",
-          'Why not?',
         ])
         break;
       case 'math':
