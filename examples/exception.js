@@ -28,9 +28,6 @@ bot({
   onConnection: async e => e.log.info(`${e.bot.username} ready`),
   // on message
   onMessage: async e => {
-    if (e.flags.isMentioned) { e.respond(`hi ${e.message.author.name} thanks for mentioning me`) }
-    e.log.info(`${e.message.author.name}:${e.message.content}`)
+    e.bork(e)
   }
 })
-
-// more detailed help in nodebot.js

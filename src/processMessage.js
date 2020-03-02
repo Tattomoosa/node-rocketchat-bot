@@ -7,7 +7,6 @@ export default ({
   message,
   messageOptions,
   lastUpdate,
-  ignoreFlags,
   bot,
   loggers,
   driver
@@ -17,16 +16,18 @@ export default ({
     disconnect, unsubscribeAll, setReaction
   } = driver
   const flags = createFlags(bot, message, messageOptions, lastUpdate)
-  const rawEvent = { err, message, messageOptions }
-  if (ignoreFlags.filter(f => flags[f]).length > 0) { return }
+  // const rawEvent = { err, message, messageOptions }
+  // if (ignoreFlags.filter(f => flags[f]).length > 0) { return }
   const roomName = async () => getRoomName(message.rid)
   const respond = async content => sendToRoomId(content, message.rid)
   const respondDirect = async content => sendDirectToUser(content, message.u.username)
+  // Wraps operations with a logging function
   const wrapLog = (name, fn) => async (...args) => {
     loggers.bot.info([`[ ${name} ]`, ...args].join(' | '))
     return fn(...args)
   }
   return {
+    err,
     flags: { ...flags },
     trueFlags: Object.keys(flags).filter(f => flags[f]),
     // bot state
@@ -47,15 +48,14 @@ export default ({
     lastUpdate,
     respond: wrapLog('respond', respond),
     respondToUser: wrapLog('respond direct', respondDirect),
-    sendToRoom: wrapLog('sendToRoom', driver.sendToRoom),
+    sendToRoom: wrapLog('send to room', driver.sendToRoom),
     sendDirectToUser: wrapLog('send to user direct', driver.sendDirectToUser),
     log: loggers.user,
-    loggers: loggers,
-    disconnect,
-    unsubscribeAll,
-    setReaction,
+    disconnect: wrapLog('disconnect', disconnect),
+    unsubscribeAll: wrapLog('unsubscribe all', unsubscribeAll),
+    setReaction: wrapLog('set reaction', setReaction),
     // Raw rocketchat driver/response
-    raw: { driver, event: { ...rawEvent } },
+    // raw: { driver, event: { ...rawEvent } },
     ops: {
       menu
     }

@@ -3,7 +3,9 @@
   "version": "0.1.2",
   "description": "Batteries included bot API for RocketChat",
   "main": "./lib/index.js",
-  "files": [ "/lib" ],
+  "files": [
+    "/lib"
+  ],
   "standard": {
     "ignore": "lib",
     "parser": "babel-eslint"
@@ -17,8 +19,9 @@
     "dev": "nodemon --watch . --ignore lib --exec 'npm run babel-dev && npm run $1'",
     "start": "npm run dev nodebot",
     "build": "npm run babel --out-dir lib",
-    "nodebot": "node -r source-map-support/register examples/nodebot.js",
-    "minimal": "node -r source-map-support/register examples/minimal.js"
+    "nodebot": "NODE_ENV=development node -r source-map-support/register examples/nodebot.js",
+    "minimal": "NODE_ENV=development node -r source-map-support/register examples/minimal.js",
+    "exception": "NODE_ENV=development node -r source-map-support/register examples/exception.js"
   },
   "keywords": [],
   "author": "Matt O'Tousa",
@@ -34,6 +37,7 @@
     "babel-eslint": "^10.1.0",
     "babel-plugin-add-module-exports": "^1.0.2",
     "babel-plugin-js-logger": "^1.0.17",
+    "dotenv": "^8.2.0",
     "nodemon": "^2.0.2",
     "source-map-support": "^0.5.16",
     "standard": "^14.3.1"
@@ -43,7 +47,6 @@
     "@rocket.chat/sdk": "^0.2.9-2",
     "bufferutil": "^4.0.1",
     "chalk": "^3.0.0",
-    "dotenv": "^8.2.0",
     "server": "^1.0.27",
     "utf-8-validate": "^5.0.2",
     "winston": "^3.2.1"

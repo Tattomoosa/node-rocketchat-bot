@@ -55,11 +55,6 @@ bot({
   // messages with these flags won't make it to your bot
   ignoreFlags: ['fromSelf', 'read', 'notInRoom'],
   // less logging
-  logLevels: {
-    rocket: 'warn',
-    user: 'debug',
-    bot: 'info'
-  },
   pretty: false,
   // only events that return true come through to process at all.
   // filtering out events in a filterFn is more efficient than waiting
@@ -70,11 +65,6 @@ bot({
   // after connection and login.
   // use this for any sort of one-time start behavior
   onConnection: async e => {
-    // turn off most raw rocketchat api logging info
-    e.loggers.rocket.level = 'warn'
-    // set to debug to see basic log of ignored events
-    // set to at least info to see log of sent messages
-    e.loggers.bot.level = 'info'
     // this is the log to use if you want info/warn/debug/error API
     // note that it doesn't expand objects, so you should still use
     // console.log for that
@@ -146,10 +136,12 @@ bot({
       case '':
         response = 'What? Maybe try `nodebot help`?'
         break
-      default: response = 'unknown command'
+      default:
+        // TODO: how to get display name?
+        response = (e.message.content + ' yourself')
+          .replace(e.bot.username, '')
     }
     if (response) {
-      e.log.info(' -> ')
       // you can respond as many times as you want to a message
       // and there is no need to await them.
       e.respond(response)
