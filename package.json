@@ -1,6 +1,6 @@
 {
   "name": "node-rocketchat-bot",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Batteries included bot API for RocketChat",
   "main": "./lib/index.js",
   "files": [
