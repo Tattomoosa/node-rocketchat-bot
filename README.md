@@ -1,4 +1,5 @@
 ![](https://travis-ci.com/Tattomoosa/node-rocketchat-bot.svg?branch=master)
+[![npm version](https://badge.fury.io/js/node-rocketchat-bot.svg)](https://badge.fury.io/js/node-rocketchat-bot)
 
 # Node RocketChat Bot
 
