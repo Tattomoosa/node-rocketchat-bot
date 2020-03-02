@@ -11,6 +11,14 @@ server communication and only exposes a handful of callbacks the user needs to
 manipulate directly. That said, check the raw field on the event callback
 for raw RocketChat API driver access.
 
+## Features
+
+* Independent color logging levels for your bot, this library, and the rocketchat API
+* A help helper
+* Easily filter incoming messages with a tag system.
+* And/or filter from the raw data directly.
+* Send a direct message if an exception is thrown with debugging information.
+
 ## Usage
 
 Install and save with npm:
@@ -30,14 +38,13 @@ $ yarn add node-rocketchat-bot -S
 Responds to `@` mentions.
 
 ``` javascript
-require('dotenv').config()
 const bot = require('node-rocketchat-bot')
 
 bot({
-  // from .env file
-  host: process.env.HOST,
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
+  // recommended - using 'dotenv' library with .env file
+  host: 'HOSTNAME',
+  username: 'USERNAME',
+  password: 'PASSWORD',
   // use ssl for https
   ssl: true,
   // join room(s)
