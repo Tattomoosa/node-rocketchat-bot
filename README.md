@@ -1,6 +1,6 @@
 ![](https://travis-ci.com/Tattomoosa/node-rocketchat-bot.svg?branch=master)
 
-# Node Rocket Bot
+# Node RocketChat Bot
 
 NodeJS RocketChat Bot Framework
 
@@ -60,6 +60,21 @@ bot({
 
 ```
 
+## Flags
+
+Built in flags that can be ignored or checked easily.
+
+* `isMentioned`
+* `spokenOf`
+* `startsWithName`
+* `fromSelf`
+* `fromBot`
+* `notInRoom`
+* `isErr`
+* `wasBeforeBoot`
+* `wasBeforeLastUpdate`
+* `read`
+
 ## Development
 
 1. `$ git clone https://github.com/Tattomoosa/node-rocketchat-bot`
@@ -72,4 +87,4 @@ bot({
 3. `$ npm install && npm start`
 
 There is a pre-commit hook for [StandardJS](https://standardjs.com/) style.
-Most of the time running `npm lint-fix` will fix any style inconsistencies.
+Most of the time running `npm run lintfix` will fix any style inconsistencies.
