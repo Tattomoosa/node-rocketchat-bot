@@ -3,10 +3,10 @@ import processMessage from './processMessage'
 import createLoggers from './logger'
 import prettyPrint from './prettyPrint'
 
-console.log(process.env.NODE_ENV)
-
 // Default only use colors if TTY.
 const isTTY = Boolean(process.stdout.isTTY)
+// TODO actually lets let user set
+const EXCEPTION_TIMEOUT = 60000
 
 const defaultLogLevels = {
   rocket: 'warn',
@@ -54,7 +54,6 @@ export default async ({
       ? author
       : messageOnException
   const levels = Object.assign({}, defaultLogLevels, logLevels)
-  console.log(levels)
   if (!loggers) { loggers = createLoggers({ colors, levels, username }) }
   // Initialize
   loggers.bot.info('[ init ] initializing...')
@@ -79,7 +78,10 @@ export default async ({
 
   // Make bot
   const bootDate = Date.now()
+
+  let lastSentExceptionDate = 0
   let lastUpdate = bootDate
+
   const bot = { id, username, bootDate }
 
   // Wake (first callback)
@@ -89,13 +91,17 @@ export default async ({
   // Start message loop
   loggers.bot.info('[ ready ] reacting to messages...')
   driver.reactToMessages(async (err, message, messageOptions) => {
+    // TODO lump some of this stuff up together?
     const pm = processMessage({
+      // raw event
       err,
       message,
       messageOptions,
+      // bot state
       lastUpdate,
       ignoreFlags,
       bot,
+      // libraries
       loggers,
       driver
     })
@@ -110,7 +116,7 @@ export default async ({
     const noIgnoreFlags = !trueIgnoreFlags.length
     // const noIgnoreFlags  = !pm.trueFlags.some(f => ignoreFlags.includes(f))
     // Any respondTo string is true
-    // TODO
+    // TODO function this
     loggers.bot.debug(`[ no ignore flags ] ${noIgnoreFlags
       ? 'pass'
       : `fail: ${
@@ -126,11 +132,16 @@ export default async ({
       try {
         await onMessage(pm)
       } catch (x) {
+        // TODO function this
         const exceptionMsg = prettyPrint.exceptionMsg(pm, x)
+        const now = Date.now()
         loggers.user.error(exceptionMsg)
-        if (messageExceptions) { driver.sendDirectToUser(exceptionMsg, messageExceptions) }
+        if (messageExceptions &&
+            (now - lastSentExceptionDate > EXCEPTION_TIMEOUT)) {
+          driver.sendDirectToUser(exceptionMsg, messageExceptions)
+          lastSentExceptionDate = now
+        }
       }
-
       if (pretty) { console.log(prettyPrint.processEndNotifier()) }
     } else loggers.bot.info(await prettyPrint.simpleIgnored(pm, filterOK))
 

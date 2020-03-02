@@ -14,21 +14,25 @@ for raw RocketChat API driver access.
 
 ## Features
 
-* Independent color logging levels for your bot, this library, and the rocketchat API
-* A help helper
+* Independent color logging levels for your bot, this library, and the API
+* A menu helper
 * Easily filter incoming messages with a tag system.
 * And/or filter from the raw data directly.
 * Send a direct message if an exception is thrown with debugging information.
 
+### TODO
+
+* A set
+
 ## Usage
 
-Install and save with npm:
+Install and save with [npm](https://www.npmjs.com/):
 
 ```
 $ npm i node-rocketchat-bot --save
 ```
 
-*or* yarn:
+*or* [yarn](https://yarnpkg.com/):
 
 ```
 $ yarn add node-rocketchat-bot -S

@@ -97,9 +97,9 @@ bot({
       case 'deps': case 'dep': case 'dependencies': case 'd': {
         const { stdout, stderr } = await exec('ls -l node_modules | wc -l')
         if (stderr) e.log.error(stderr)
-        response = `I have ${stdout.slice(0, -1)} dependencies, and I'm \
-                    sure they all do something really important and difficult \
-                    to write from scratch.`
+        response = `I have ${stdout.slice(0, -1)} dependencies, and I'm ` +
+          'sure they all do something really important and difficult ' +
+          'to write from scratch.'
         break
       }
       case 'why': case 'node': case 'javascript':
