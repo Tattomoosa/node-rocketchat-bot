@@ -64,7 +64,7 @@ bot({
     e.message.content.toLowerCase().startsWith(e.bot.username.toLowerCase()),
   // after connection and login.
   // use this for any sort of one-time start behavior
-  onConnection: async e => {
+  onWake: async e => {
     // this is the log to use if you want info/warn/debug/error API
     // note that it doesn't expand objects, so you should still use
     // console.log for that
@@ -140,6 +140,10 @@ bot({
         // TODO: how to get display name?
         response = (e.message.content + ' yourself')
           .replace(e.bot.username, '')
+          // replace ALL mentions, we don't want to spam
+          // other mentioned users
+          .replace(/^@(\w)*[\s|\n|$]/g, '')
+          .trim()
     }
     if (response) {
       // you can respond as many times as you want to a message

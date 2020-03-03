@@ -23,7 +23,7 @@ export default ({
   const respondDirect = async content => sendDirectToUser(content, message.u.username)
   // Wraps operations with a logging function
   const wrapLog = (name, fn) => async (...args) => {
-    loggers.bot.info([`[ ${name} ]`, ...args].join(' | '))
+    loggers.bot.info(`[ ${name} ] -> "${args.join(', ')}"`)
     return fn(...args)
   }
   return {
@@ -38,7 +38,7 @@ export default ({
       content: message.msg,
       mentions: message.mentions,
       author: { ...message.u },
-      timestamp: message.ts.$date
+      timestamp: new Date(message.ts.$date)
     },
     room: {
       id: message.rid,

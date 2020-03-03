@@ -10,12 +10,28 @@ const flags = (flags, color) =>
       .join(' ') + '\n'
     : ''
 
-const toUpperCase = c => c.toUpperCase()
+// const toUpperCase = c => c.toUpperCase()
 
 const camelToTitleCase = str =>
   str
     .replace(/([A-Z])/g, ' $1')
-    .replace(/^[a-z]/, toUpperCase)
+    .replace(/^[a-z]/, c => c.toUpperCase())
+
+// const date = ts => new Date(ts)
+const padTime = d => ('0' + d).substr(-2)
+const time = d => {
+  return (
+    `${d.getHours()}:` +
+    `${padTime(d.getMinutes())}:` +
+    `${padTime(d.getSeconds())} ` +
+    `${padTime(d.getMonth())}/` +
+    `${padTime(d.getDate())}/` +
+    `${padTime(d.getYear())} `
+  )
+  // const t = date.toISOString().split('T')
+  // return t[1].split('.')[0] + ' ' + t[0].split('-').join('/')
+}
+const now = () => time(new Date())
 
 const pad = (str, by = 1) => {
   const p = Array(by).fill(' ').join('')
@@ -31,13 +47,13 @@ const ROOM_COLOR = c.magenta
 
 const room = (name, type) => ROOM_COLOR(pad(`(${formatRoomText(name, type)})`))
 const ignoreFlags = f => flags(f, IGNORE_COLOR)
-const processNotifier = () => EVENT_COLOR('<event>')
+const processNotifier = ts => EVENT_COLOR(`<event (${time(ts)})>`)
 const processEndNotifier = () => EVENT_COLOR('</event>')
 const name = n => `${NAME_COLOR(pad(n))}`
 const content = content => `${MSG_COLOR(pad(content))}`
 
 const processStart = async pm => [
-  processNotifier(),
+  processNotifier(pm.message.timestamp),
   '\n',
   ignoreFlags(pm.trueFlags),
   room(await pm.room.getName(pm.room.id), pm.room.type),
@@ -46,19 +62,20 @@ const processStart = async pm => [
   content(pm.message.content)
 ].join('')
 
-const simpleIgnored = async (pm, filterOK) => '[ignored message] ' +
+const simpleIgnored = async (pm, filterOK) =>
+  // TODO would it be better to convert timestamp to date within
+  // processMessages???
+  `[ ignored message ] (${time(pm.message.timestamp)}) ` +
   `message: [(${formatRoomText(pm.room
       ? await pm.room.getName(pm.room.id)
-      : '', pm.room.type)}) ` +
+      : '', pm.room.type)}] ` +
   `${pm.message.author.name}: ${pm.message.content}] ` +
-  `flags: [ ${pm.trueFlags.join(' ] [ ')} ] ` +
-  `filterFn: [ ${filterOK ? 'pass' : 'fail'} ]`
+  `flags: [ ${pm.trueFlags.join(', ')} ] ` +
+  `filterFn: ${filterOK ? 'passed' : 'failed'}`
 
-const time = date => {
-  const t = date.toISOString().split('T')
-  return t[1].split('.')[0] + ' ' + t[0].split('-').join('/')
-}
-const now = () => time(new Date())
+const processFilter = ok => `[ filter function ] ${
+  ok ? 'passed' : 'failed'
+}`
 
 const exceptionMsg = (pm, x) => '```\n' +
   `[[[ exception thrown ]]] (${now()})\n\n` +
@@ -78,6 +95,12 @@ const exceptionMsg = (pm, x) => '```\n' +
   `${util.inspect(x)}` +
   '\n```'
 
+const processIgnoreFlags = tf =>
+  `[ no ignore flags ] ${!tf.length
+  ? 'pass'
+  : `failed: ${tf.join(', ')}`
+  }`
+
 export default {
   name,
   room,
@@ -86,7 +109,9 @@ export default {
   exceptionMsg,
   processNotifier,
   processEndNotifier,
+  processIgnoreFlags,
   format: { roomText: formatRoomText },
+  processFilter,
   processStart,
   simpleIgnored,
   time,

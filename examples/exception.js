@@ -25,7 +25,7 @@ bot({
   ignoreFlags: ['fromSelf', 'read', 'notInRoom'],
   messageOnException: true,
   // when ready (can also console.log)
-  onConnection: async e => e.log.info(`${e.bot.username} ready`),
+  onWake: async e => e.log.info(`${e.bot.username} ready`),
   // on message
   onMessage: async e => {
     e.bork(e)

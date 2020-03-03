@@ -5,8 +5,6 @@ import prettyPrint from './prettyPrint'
 
 // Default only use colors if TTY.
 const isTTY = Boolean(process.stdout.isTTY)
-// TODO actually lets let user set
-const EXCEPTION_TIMEOUT = 60000
 
 const defaultLogLevels = {
   rocket: 'warn',
@@ -27,10 +25,11 @@ export default async ({
   // message on exception, message author if true
   // or specified user if string
   messageOnException = null,
+  messageOnExceptionTimeout = 60000,
   ssl: useSsl = true,
   rooms: _rooms,
   // run on wake
-  onConnection,
+  onWake,
   // run on message
   onMessage,
   // use colors?
@@ -45,7 +44,13 @@ export default async ({
   // flags:
   // pass empty array to disable defaults, not recommended
   // except 'read' if you want to track message edits
-  ignoreFlags = ['fromSelf', 'read', 'notInRoom']
+  // TODO is `wasBeforeBoot` ever even triggered? I swear it used to be....
+  ignoreFlags = [
+    'fromSelf',
+    'notInRoom',
+    'wasBeforeLastUpdate',
+    'read',
+    'wasBeforeBoot']
   // ignoreFlags = []
 }) => {
   // if true, author. otherwise, presume a string or false or null, all work out
@@ -86,7 +91,12 @@ export default async ({
 
   // Wake (first callback)
   loggers.bot.info('[ wake ] waking bot...')
-  await onConnection({ log: loggers.user, loggers: loggers, bot: { ...bot } })
+  await onWake({
+    log: loggers.user,
+    loggers: loggers,
+    bot: { ...bot }
+  }
+  )
 
   // Start message loop
   loggers.bot.info('[ ready ] reacting to messages...')
@@ -106,25 +116,22 @@ export default async ({
       driver
     })
 
+    // time
+    const thisUpdate = pm.message.timestamp
+
+    // log error in message
+    if (err) { loggers.bot.warn('Error in message: ' + err) }
+
+    // filter function
     const filterOK = filterFn(pm)
-    loggers.bot.debug(`[ passes filter function ] ${
-      filterOK
-        ? 'pass'
-        : 'fail'}`)
-    // No ignore flags are true
+    loggers.bot.debug(prettyPrint.processFilter(filterOK))
+
+    // ignore flags
     const trueIgnoreFlags = pm.trueFlags.filter(f => ignoreFlags.includes(f))
     const noIgnoreFlags = !trueIgnoreFlags.length
-    // const noIgnoreFlags  = !pm.trueFlags.some(f => ignoreFlags.includes(f))
-    // Any respondTo string is true
-    // TODO function this
-    loggers.bot.debug(`[ no ignore flags ] ${noIgnoreFlags
-      ? 'pass'
-      : `fail: ${
-        trueIgnoreFlags
-          .map(f => `[ ${f} ]`)
-          .join(' ')
-          } `}`)
-    if (err) { loggers.bot.warn('Error in message: ' + err) }
+    loggers.bot.debug(prettyPrint.processIgnoreFlags(trueIgnoreFlags))
+
+    // trigger onMessage if all conditions pass
     if (filterOK && noIgnoreFlags) {
       loggers.bot.debug('[ all ok ] triggering response')
       if (pretty) { console.log(await prettyPrint.processStart(pm)) }
@@ -134,17 +141,19 @@ export default async ({
       } catch (x) {
         // TODO function this
         const exceptionMsg = prettyPrint.exceptionMsg(pm, x)
-        const now = Date.now()
         loggers.user.error(exceptionMsg)
-        if (messageExceptions &&
-            (now - lastSentExceptionDate > EXCEPTION_TIMEOUT)) {
-          driver.sendDirectToUser(exceptionMsg, messageExceptions)
-          lastSentExceptionDate = now
+        if (messageExceptions) {
+          const now = thisUpdate
+          const since = now - lastSentExceptionDate
+          if (since > messageOnExceptionTimeout) {
+            driver.sendDirectToUser(exceptionMsg, messageExceptions)
+            lastSentExceptionDate = now
+          } else { loggers.bot.info(`not DMing exception, timeout: ${since}/${messageOnExceptionTimeout}`) }
         }
       }
       if (pretty) { console.log(prettyPrint.processEndNotifier()) }
     } else loggers.bot.info(await prettyPrint.simpleIgnored(pm, filterOK))
 
-    lastUpdate = Date.now()
+    lastUpdate = thisUpdate
   })
 }
