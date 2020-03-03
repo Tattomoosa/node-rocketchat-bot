@@ -19,6 +19,7 @@
     "dev": "nodemon --watch . --ignore lib --exec 'npm run babel-dev && npm run $1'",
     "start": "npm run dev nodebot",
     "build": "npm run babel --out-dir lib",
+    "deploy": "node examples/nodebot",
     "nodebot": "NODE_ENV=development node -r source-map-support/register examples/nodebot.js",
     "minimal": "NODE_ENV=development node -r source-map-support/register examples/minimal.js",
     "exception": "NODE_ENV=development node -r source-map-support/register examples/exception.js"

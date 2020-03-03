@@ -63,13 +63,15 @@ const processStart = async pm => [
 ].join('')
 
 const simpleIgnored = async (pm, filterOK) =>
-  // TODO would it be better to convert timestamp to date within
-  // processMessages???
   `[ ignored message ] (${time(pm.message.timestamp)}) ` +
   `message: [(${formatRoomText(pm.room
       ? await pm.room.getName(pm.room.id)
       : '', pm.room.type)}] ` +
-  `${pm.message.author.name}: ${pm.message.content}] ` +
+  `${pm.message.author.name}: ${
+      pm.message.content
+        .split('\n').join('\\n')
+        .split(/\s\s*/).join(' ')
+  }] ` +
   `flags: [ ${pm.trueFlags.join(', ')} ] ` +
   `filterFn: ${filterOK ? 'passed' : 'failed'}`
 
