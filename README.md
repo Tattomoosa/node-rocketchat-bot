@@ -57,6 +57,7 @@ bot({
       event.respond(`hi ${e.message.author.name} thanks for mentioning me`)
   }
 })
+```
 
 ## Flags
 
