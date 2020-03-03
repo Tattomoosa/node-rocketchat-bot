@@ -109,9 +109,6 @@ bot({
 
 Want another flag? [Open an issue](https://github.com/Tattomoosa/node-rocketchat-bot/issues/new)
 
-
-```
-
 ## Logging
 
 Within `onWake` or `onMessage`, `event.log` has functions `debug`, `info`,
