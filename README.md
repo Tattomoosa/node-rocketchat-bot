@@ -7,10 +7,7 @@ NodeJS RocketChat Bot Framework
 
 ## About
 
-This library is intended to be "batteries-included" in that it handles all
-server communication and only exposes a handful of callbacks the user needs to
-manipulate directly. That said, check the raw field on the event callback
-for raw RocketChat API driver access.
+This library is intended to be "batteries-included" with the goal of making deploying a RocketChat bot as easy as possible.
 
 ## Features
 
