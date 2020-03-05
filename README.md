@@ -1,6 +1,7 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![](https://travis-ci.com/Tattomoosa/node-rocketchat-bot.svg?branch=master)
+![build](https://travis-ci.com/Tattomoosa/node-rocketchat-bot.svg?branch=master)
 [![npm version](https://badge.fury.io/js/node-rocketchat-bot.svg)](https://badge.fury.io/js/node-rocketchat-bot)
+[![downloads/week](https://img.shields.io/npm/dw/node-rocketchat-bot)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Node RocketChat Bot
 
