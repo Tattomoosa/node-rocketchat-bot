@@ -1,3 +1,5 @@
+> This package is no longer maintained. It was built specifically for the usage of students at Portland State University in the Computer Action Team. I am no longer there and I believe dependency issues have caused it to stop working and there are many security warnings I don't have the time to resolve. Use at your own risk
+
 ![build](https://travis-ci.com/Tattomoosa/node-rocketchat-bot.svg?branch=master)
 [![npm version](https://badge.fury.io/js/node-rocketchat-bot.svg)](https://badge.fury.io/js/node-rocketchat-bot)
 [![downloads/week](https://img.shields.io/npm/dw/node-rocketchat-bot)]()
